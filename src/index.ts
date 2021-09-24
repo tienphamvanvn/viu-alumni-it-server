@@ -5,6 +5,7 @@ import logger from "morgan";
 import dotenv from "dotenv";
 
 import connectDB from "./config/db";
+import routes from "./routes";
 
 dotenv.config();
 connectDB(process.env.MONGO_URI as string);
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(logger("dev"));
 
+app.use("/api", routes);
 app.use((req: Request, res: Response) => {
   return res.status(404).json({ error: "Route not found" });
 });
