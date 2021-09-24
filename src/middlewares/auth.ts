@@ -1,9 +1,58 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import validUrl from "valid-url";
 import statusCodes from "../utils/status-codes";
 import messages from "../utils/messages";
 import { isPasswordValid } from "../utils/misc";
 import User, { IUserProps } from "../models/user.model";
+
+const auth = async (req: Request, res: Response, next: NextFunction) => {
+  const token = req.header("Authorization");
+
+  if (!token) {
+    return res
+      .status(statusCodes.unauthorized)
+      .json({ message: messages.unauthorized });
+  }
+
+  const decoded = (await jwt.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET as string
+  )) as { id: string };
+
+  if (!decoded) {
+    return res
+      .status(statusCodes.unauthorized)
+      .json({ message: messages.unauthorized });
+  }
+
+  const account = await User.findById(decoded.id);
+
+  if (!account) {
+    return res
+      .status(statusCodes.notFound)
+      .json({ message: messages.loginError });
+  }
+
+  req.account = <IUserProps>{
+    ...account._doc,
+    password: "",
+  };
+
+  next();
+};
+
+const checkURL = async (req: Request, res: Response, next: NextFunction) => {
+  const url = req.body.website;
+  if (url) {
+    if (!validUrl.isUri(url)) {
+      return res
+        .status(statusCodes.badRequest)
+        .json({ message: messages.urlError });
+    }
+  }
+  next();
+};
 
 const checkStudentIDTaken = async (
   req: Request,
@@ -106,4 +155,11 @@ const checkAccount = async (
   next();
 };
 
-export { checkStudentIDTaken, checkEmailTaken, checkSignIn, checkAccount };
+export {
+  auth,
+  checkURL,
+  checkStudentIDTaken,
+  checkEmailTaken,
+  checkSignIn,
+  checkAccount,
+};

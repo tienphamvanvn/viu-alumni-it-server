@@ -77,6 +77,10 @@ const userSchema = new Schema({
     type: String,
     default: "",
   },
+  currentCity: {
+    type: String,
+    default: "",
+  },
   hometown: {
     type: String,
     default: "",
@@ -85,7 +89,7 @@ const userSchema = new Schema({
     type: String,
     default: "",
   },
-  major: {
+  majors: {
     type: String,
     default: "",
   },
