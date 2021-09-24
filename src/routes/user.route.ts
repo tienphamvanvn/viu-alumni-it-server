@@ -16,6 +16,7 @@ userRoute.patch(
 );
 userRoute.patch("/:id/follow", auth, userController.follow);
 userRoute.patch("/:id/unfollow", auth, userController.unfollow);
+userRoute.get("/suggestions-user", auth, userController.suggestionsUser);
 userRoute.get("/:studentID/follow", auth, userController.getFollow);
 userRoute.get("/:studentID", userController.getUserByStudentID);
 

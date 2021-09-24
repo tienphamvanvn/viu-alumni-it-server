@@ -135,17 +135,48 @@ const userController = {
         .populate({
           path: "followers",
           model: "User",
-          select: "fullName studentID profilePicture bio",
+          select: "fullname studentID profilePicture bio",
         })
         .populate({
           path: "following",
           model: "User",
-          select: "fullName studentID profilePicture bio",
+          select: "fullname studentID profilePicture bio",
         });
 
       return res
         .status(statusCodes.success)
         .json({ followers: user?.followers, following: user?.following });
+    } catch (error) {
+      return res
+        .status(statusCodes.serverError)
+        .json({ message: messages.serverError });
+    }
+  },
+  suggestionsUser: async (req: Request, res: Response) => {
+    try {
+      const newArr = [...req.account.following, req.account._id];
+
+      const users = await User.aggregate([
+        { $match: { _id: { $nin: newArr } } },
+        {
+          $lookup: {
+            from: "User",
+            localField: "followers",
+            foreignField: "_id",
+            as: "followers",
+          },
+        },
+        {
+          $lookup: {
+            from: "User",
+            localField: "following",
+            foreignField: "_id",
+            as: "following",
+          },
+        },
+      ]).project("-password");
+
+      return res.status(statusCodes.success).json({ users });
     } catch (error) {
       return res
         .status(statusCodes.serverError)
