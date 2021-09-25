@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+import { INotifyProps } from "./models/notify.model";
 import { IUserProps } from "./models/user.model";
 
 let users: any[] = [];
@@ -27,6 +28,18 @@ const socketServer = (socket: Socket, io: any) => {
   socket.on("unfollow", data => {
     const user = users.find(user => user.id === data.user._id);
     user && io.to(`${user.socketId}`).emit("unfollowToClient", data);
+  });
+
+  // Create notify
+  socket.on("createNotify", (notify: INotifyProps) => {
+    const client = users.find(user => notify.recipients.includes(user.id));
+    client && io.to(`${client.socketId}`).emit("createNotifyToClient", notify);
+  });
+
+  // Delete notify
+  socket.on("deleteNotify", (notify: INotifyProps) => {
+    const client = users.find(user => notify.recipients.includes(user.id));
+    client && io.to(`${client.socketId}`).emit("deleteNotifyToClient", notify);
   });
 };
 
