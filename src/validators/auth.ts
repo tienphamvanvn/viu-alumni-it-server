@@ -54,6 +54,8 @@ const validateSignIn = [
   check("studentID")
     .notEmpty()
     .withMessage("Please input your Student ID")
+    .isNumeric()
+    .withMessage("Student ID must be numeric")
     .trim()
     .escape(),
   check("password")

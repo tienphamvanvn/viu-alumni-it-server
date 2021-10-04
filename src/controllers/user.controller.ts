@@ -183,6 +183,47 @@ const userController = {
         .json({ message: messages.serverError });
     }
   },
+  bookmarkPost: async (req: Request, res: Response) => {
+    try {
+      const accountFound = await User.find({
+        _id: req.account._id,
+        bookmark: req.params.id,
+      });
+      if (accountFound.length > 0)
+        return res.status(400).json({ msg: "You saved this post." });
+
+      const account = await User.findOneAndUpdate(
+        { _id: req.account._id },
+        {
+          $push: { bookmark: req.params.id },
+        },
+        { new: true }
+      );
+
+      return res.status(statusCodes.success).json({ account });
+    } catch (error) {
+      return res
+        .status(statusCodes.serverError)
+        .json({ message: messages.serverError });
+    }
+  },
+  unbookmarkPost: async (req: Request, res: Response) => {
+    try {
+      const account = await User.findOneAndUpdate(
+        { _id: req.account._id },
+        {
+          $pull: { bookmark: req.params.id },
+        },
+        { new: true }
+      );
+
+      return res.status(statusCodes.success).json({ account });
+    } catch (error) {
+      return res
+        .status(statusCodes.serverError)
+        .json({ message: messages.serverError });
+    }
+  },
 };
 
 export default userController;

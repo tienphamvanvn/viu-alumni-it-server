@@ -61,14 +61,15 @@ const notifyController = {
   },
   isReadNotify: async (req: Request, res: Response) => {
     try {
-      const notifies = await Notify.findOneAndUpdate(
+      const notify = await Notify.findOneAndUpdate(
         { _id: req.params.id },
         {
           isRead: true,
-        }
+        },
+        { new: true }
       );
 
-      return res.status(statusCodes.success).json({ notifies });
+      return res.status(statusCodes.success).json({ notify });
     } catch (error) {
       return res
         .status(statusCodes.serverError)

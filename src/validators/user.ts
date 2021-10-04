@@ -1,4 +1,4 @@
-const { check } = require("express-validator");
+import { check } from "express-validator";
 
 const validateEditAccount = [
   check("fullname")

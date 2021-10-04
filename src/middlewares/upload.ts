@@ -11,9 +11,28 @@ v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const params: { folder: string; allowed_formats: string[] } = {
+// const params: { folder: string; allowed_formats: string[] } = {
+//   folder: "viu-alumni-it",
+//   allowed_formats: ["jpg", "png", "jpeg", "gif"],
+// };
+
+const params: {
+  folder: string;
+  allowed_formats: string[];
+  resource_type: string;
+} = {
   folder: "viu-alumni-it",
-  allowed_formats: ["jpg", "png", "jpeg", "gif"],
+  allowed_formats: [
+    "jpg",
+    "png",
+    "jpeg",
+    "gif",
+    "webp",
+    "mp4",
+    "quicktime",
+    "webm",
+  ],
+  resource_type: "auto",
 };
 
 const storage = new CloudinaryStorage({

@@ -12,4 +12,11 @@ uploadRoute.post(
   uploadController.singleFile
 );
 
+uploadRoute.post(
+  "/multiple-file",
+  auth,
+  upload.array("multiple-file"),
+  uploadController.multipleFile
+);
+
 export default uploadRoute;
